@@ -54,14 +54,14 @@ jobs:
         with:
           version: latest
       
-      # - name: Push to Octopus 🐙
-      #   uses: OctopusDeploy/push-package-action@v1.1.1
-      #   with:
-      #     server: ${{ secrets.DEPLOY_URL }}
-      #     space: Integrations
-      #     api_key: ${{ secrets.DEPLOY_API_KEY }}
-      #     packages: |
-      #       ./artifacts/Ncron.Advanced.${{ steps.build.outputs.octoversion_fullsemver }}.nupkg
+      - name: Push to Octopus 🐙
+        uses: OctopusDeploy/push-package-action@v1.1.1
+        with:
+          server: ${{ secrets.DEPLOY_URL }}
+          space: Integrations
+          api_key: ${{ secrets.DEPLOY_API_KEY }}
+          packages: |
+            ./artifacts/Ncron.Advanced.${{ steps.build.outputs.octoversion_fullsemver }}.nupkg
 
       # - name: Create Release in Octopus 🐙
       #   uses: OctopusDeploy/create-release-action@v1.1.1
