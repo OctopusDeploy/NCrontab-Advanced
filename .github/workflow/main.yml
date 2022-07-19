@@ -1,0 +1,78 @@
+name: Build, Test, Package and Push
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on pull request events and merges/pushes to main
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+  pull_request:
+    types: [opened, synchronize, reopened]
+  # schedule:
+  #   # Daily 5am australian/brisbane time
+  #   - cron: '19 0 * * *'
+  #   # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # all
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Nuke Build 🏗
+        id: build
+        shell: bash
+        # Pass branch and patch number to Nuke OctoVersion
+        # (for pull_request events we override the /refs/pull/xx/merge branch to the PR's head branch)
+        env:
+          OCTOVERSION_CurrentBranch: ${{ github.head_ref || github.ref }}
+          OCTOVERSION_Patch: ${{ github.run_number }}
+        run: ./build.sh
+        
+      - name: Tag release (when not pre-release) 🏷️
+        id: github-tag
+        if: ${{ !contains( steps.build.outputs.octoversion_fullsemver, '-' ) }}
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/${{ steps.build.outputs.octoversion_fullsemver }}",
+              sha: context.sha
+            })
+
+      - name: Install Octopus CLI 🐙
+        uses: OctopusDeploy/install-octopus-cli-action@v1.1.7
+        with:
+          version: latest
+      
+      # - name: Push to Octopus 🐙
+      #   uses: OctopusDeploy/push-package-action@v1.1.1
+      #   with:
+      #     server: ${{ secrets.DEPLOY_URL }}
+      #     space: Integrations
+      #     api_key: ${{ secrets.DEPLOY_API_KEY }}
+      #     packages: |
+      #       ./artifacts/Ncron.Advanced.${{ steps.build.outputs.octoversion_fullsemver }}.nupkg
+
+      # - name: Create Release in Octopus 🐙
+      #   uses: OctopusDeploy/create-release-action@v1.1.1
+      #   with:
+      #     server: ${{ secrets.DEPLOY_URL }}
+      #     space: Integrations
+      #     api_key: ${{ secrets.DEPLOY_API_KEY }}
+      #     project: "Ncron.Advanced"
+      #     packages: |
+      #       Ncron.Advanced:${{ steps.build.outputs.octoversion_fullsemver }}
