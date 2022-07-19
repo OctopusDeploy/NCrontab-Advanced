@@ -43,7 +43,7 @@ class Build : NukeBuild
     string BranchName { get; set; }
 
     AbsolutePath SourceDirectory => RootDirectory / "source";
-    AbsolutePath ArtifactsDirectory => RootDirectory / "build" / "target";
+    AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
     
 
     Target Clean => _ => _
