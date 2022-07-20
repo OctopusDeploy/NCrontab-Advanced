@@ -58,7 +58,7 @@ jobs:
         uses: OctopusDeploy/push-package-action@v1.1.1
         with:
           server: ${{ secrets.DEPLOY_URL }}
-          space: Integrations
+          space: Core Platform
           api_key: ${{ secrets.DEPLOY_API_KEY }}
           packages: |
             ./artifacts/NCrontab.Advanced.${{ steps.build.outputs.octoversion_fullsemver }}.nupkg
