@@ -82,6 +82,6 @@ jobs:
           server: ${{ secrets.DEPLOY_URL }}
           space: Core Platform
           api_key: ${{ secrets.DEPLOY_API_KEY }}
-          project: "Ncron.Advanced"
+          project: "Investigation.Ncron.Advanced"
           packages: |
             Ncron.Advanced:${{ steps.build.outputs.octoversion_fullsemver }}
