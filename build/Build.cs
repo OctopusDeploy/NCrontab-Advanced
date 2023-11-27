@@ -11,8 +11,7 @@ class Build : NukeBuild
 {
     const string CiBranchNameEnvVariable = "OCTOVERSION_CurrentBranch";
 
-    [Parameter(
-        "Whether to auto-detect the branch name - this is okay for a local build, but should not be used under CI.")]
+    [Parameter("Whether to auto-detect the branch name - this is okay for a local build, but should not be used under CI.")]
     readonly bool AutoDetectBranch = IsLocalBuild;
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
@@ -22,9 +21,7 @@ class Build : NukeBuild
 
     [Parameter("Test filter expression", Name = "where")] readonly string TestFilter = string.Empty;
 
-    [OctoVersion(BranchParameter = nameof(BranchName),
-        AutoDetectBranchParameter = nameof(AutoDetectBranch),
-        Framework = "net6.0")]
+    [OctoVersion(BranchMember = nameof(BranchName), AutoDetectBranchMember = nameof(AutoDetectBranch), Framework = "net6.0")]
     public OctoVersionInfo OctoVersionInfo;
 
     [Parameter(
@@ -40,9 +37,9 @@ class Build : NukeBuild
     Target Clean => _ => _
         .Executes(() =>
         {
-            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-            DeleteDirectory(TestResultsDirectory);
-            EnsureCleanDirectory(ArtifactsDirectory);
+            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(d => d.DeleteDirectory());
+            TestResultsDirectory.DeleteDirectory();
+            ArtifactsDirectory.CreateOrCleanDirectory();
         });
 
     Target Restore => _ => _
