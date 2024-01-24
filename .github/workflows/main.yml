@@ -10,6 +10,7 @@ on:
   schedule:
     # Daily 5am australian/brisbane time
     - cron: '0 19 * * *'
+  workflow_dispatch:
 
 env:
   OCTOVERSION_CurrentBranch: ${{ github.head_ref || github.ref }} # For pull_request events we override the /refs/pull/xx/merge branch to the PR's head branch
