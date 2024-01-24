@@ -18,6 +18,10 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Required to obtain the ID token from GitHub Actions
+      contents: read # Required to check out code
+      checks: write # Required for test-reporter
     env:
       OCTOPUS_SPACE: "Core Platform"
     steps:
