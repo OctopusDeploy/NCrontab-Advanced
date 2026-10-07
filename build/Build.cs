@@ -4,7 +4,6 @@ using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.OctoVersion;
 using Nuke.Common.Utilities.Collections;
-using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 class Build : NukeBuild
@@ -21,7 +20,7 @@ class Build : NukeBuild
 
     [Parameter("Test filter expression", Name = "where")] readonly string TestFilter = string.Empty;
 
-    [OctoVersion(BranchMember = nameof(BranchName), AutoDetectBranchMember = nameof(AutoDetectBranch), Framework = "net6.0")]
+    [OctoVersion(BranchMember = nameof(BranchName), AutoDetectBranchMember = nameof(AutoDetectBranch), Framework = "net10.0")]
     public OctoVersionInfo OctoVersionInfo;
 
     [Parameter(
@@ -72,7 +71,7 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetLoggers("trx")
                 .SetFilter(TestFilter)
-                .SetVerbosity(DotNetVerbosity.Normal)
+                .SetVerbosity(DotNetVerbosity.normal)
                 .EnableNoBuild()
                 .EnableNoRestore()
                 .SetResultsDirectory(TestResultsDirectory));
